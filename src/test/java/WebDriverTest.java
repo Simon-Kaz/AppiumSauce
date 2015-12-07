@@ -29,7 +29,7 @@ public class WebDriverTest {
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setCapability("version", "17");
         capabilities.setCapability("platform", Platform.XP);
-        this.driver = new RemoteWebDriver(new URL(SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
+        this.driver = new RemoteWebDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
                 ,capabilities);
     }
 
