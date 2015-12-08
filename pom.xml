@@ -23,7 +23,11 @@
             <artifactId>sauce_junit</artifactId>
             <version>LATEST</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>3.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
