@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
  * @author Ross Rowe
  */
 @RunWith(ConcurrentParameterized.class)
-public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
+public class ParallelBrowserTest implements SauceOnDemandSessionIdProvider {
 
     private String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
     private String SAUCE_KEY = System.getenv("SAUCE_KEY");
@@ -72,7 +72,7 @@ public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
      * @param version
      * @param browser
      */
-    public SampleSauceTest(String os, String version, String browser) {
+    public ParallelBrowserTest(String os, String version, String browser) {
         super();
         this.os = os;
         this.version = version;
@@ -86,8 +86,10 @@ public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
     @ConcurrentParameterized.Parameters
     public static LinkedList browsersStrings() {
         LinkedList browsers = new LinkedList();
+        browsers.add(new String[]{"Windows 7", "41", "chrome"});
         browsers.add(new String[]{"Windows 8.1", "11", "internet explorer"});
         browsers.add(new String[]{"OSX 10.8", "6", "safari"});
+        browsers.add(new String[]{"Linux", "37", "firefox"});
         return browsers;
     }
 
