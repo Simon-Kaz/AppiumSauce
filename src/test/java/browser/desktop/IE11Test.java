@@ -3,12 +3,10 @@ package browser.desktop;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
@@ -34,13 +32,6 @@ public class IE11Test {
     @Test
     public void webDriver() throws Exception {
         driver.get("http://www.amazon.com/");
-        wait.until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver wdriver) {
-                return ((JavascriptExecutor) driver).executeScript(
-                        "return document.readyState"
-                ).equals("complete");
-            }
-        });
         assertEquals("Amazon.com: Online Shopping for Electronics, Apparel, Computers, Books, DVDs & more", driver.getTitle());
     }
 
