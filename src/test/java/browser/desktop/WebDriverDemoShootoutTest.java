@@ -43,7 +43,7 @@ public class WebDriverDemoShootoutTest {
         driver.quit();
     }
 
-    @Test
+//    @Test
     public void testLoginFailsWithBadCredentials() throws Exception {
         String userName = getUniqueId();
         String password = getUniqueId();
