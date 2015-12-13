@@ -1,3 +1,5 @@
+package browser.mobile;
+
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -10,10 +12,7 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by szymonk on 12/8/15.
- */
-public class IOSTest {
+public class IOSWebTest {
 
     private String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
     private String SAUCE_KEY = System.getenv("SAUCE_KEY");

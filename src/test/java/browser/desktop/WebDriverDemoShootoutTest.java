@@ -1,3 +1,5 @@
+package browser.desktop;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -6,6 +8,8 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -21,6 +25,7 @@ public class WebDriverDemoShootoutTest {
     private String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
     private String SAUCE_KEY = System.getenv("SAUCE_KEY");
     private WebDriver driver;
+    private WebDriverWait wait;
 
     @Before
     public void setUp() throws Exception {
@@ -42,6 +47,7 @@ public class WebDriverDemoShootoutTest {
     public void testLoginFailsWithBadCredentials() throws Exception {
         String userName = getUniqueId();
         String password = getUniqueId();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.name("login")));
         driver.findElement(By.name("login")).sendKeys(userName);
         driver.findElement(By.name("password")).sendKeys(password);
         driver.findElement(By.cssSelector("input.login")).click();

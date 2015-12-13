@@ -1,3 +1,5 @@
+package browser.mobile;
+
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -5,16 +7,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-public class AndroidTest {
+public class AndroidWebTest {
 
     private String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
     private String SAUCE_KEY = System.getenv("SAUCE_KEY");
     private AppiumDriver driver;
+    private WebDriverWait wait;
 
     @Before
     public void setUp() throws Exception {
@@ -27,12 +31,13 @@ public class AndroidTest {
         capabilities.setCapability("deviceOrientation", "portrait");
         capabilities.setCapability("appiumVersion", "1.4.16");
 
-        this.driver = new AndroidDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
-                ,capabilities);
+        //this.driver = new AndroidDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
+//                ,capabilities);
+        this.driver = new AndroidDriver(new URL("0.0.0.0:4723"),capabilities);
     }
 
     @Test
-    public void androidTest() throws Exception {
+    public void androidWebTest() throws Exception {
         driver.get("http://www.amazon.com/");
         assertEquals("Amazon.com", driver.getTitle());
     }

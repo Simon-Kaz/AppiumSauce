@@ -1,3 +1,5 @@
+package browser.desktop;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,11 +12,6 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Simple {@link org.openqa.selenium.remote.RemoteWebDriver} test that demonstrates how to run your Selenium tests with <a href="http://saucelabs.com/ondemand">Sauce OnDemand</a>.
- * *
- * @author Ross Rowe
- */
 public class WebDriverTest {
 
     private String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
@@ -23,9 +20,6 @@ public class WebDriverTest {
 
     @Before
     public void setUp() throws Exception {
-
-
-
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setCapability("version", "17");
         capabilities.setCapability("platform", Platform.XP);
