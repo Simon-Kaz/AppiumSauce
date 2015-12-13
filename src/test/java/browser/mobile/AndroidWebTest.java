@@ -31,9 +31,8 @@ public class AndroidWebTest {
         capabilities.setCapability("deviceOrientation", "portrait");
         capabilities.setCapability("appiumVersion", "1.4.16");
 
-        //this.driver = new AndroidDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
-//                ,capabilities);
-        this.driver = new AndroidDriver(new URL("0.0.0.0:4723"),capabilities);
+        this.driver = new AndroidDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
+                ,capabilities);
     }
 
     @Test
