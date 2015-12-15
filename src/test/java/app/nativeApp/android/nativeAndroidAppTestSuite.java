@@ -23,8 +23,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 
-//Test suite to verify that the user can access context menu in a native Android app
-public class nativeAndroidAppTestSuite {
+//Test suite for a native Android app
+public class NativeAndroidAppTestSuite {
 
     private static String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
     private static String SAUCE_KEY = System.getenv("SAUCE_KEY");
