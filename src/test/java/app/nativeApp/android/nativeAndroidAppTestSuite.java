@@ -16,7 +16,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.File;
 import java.net.URL;
 import java.util.List;
 
@@ -27,24 +26,21 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 //Test suite to verify that the user can access context menu in a native Android app
 public class nativeAndroidAppTestSuite {
 
-    private String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
-    private String SAUCE_KEY = System.getenv("SAUCE_KEY");
+    private static String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
+    private static String SAUCE_KEY = System.getenv("SAUCE_KEY");
     private static AppiumDriver driver;
     private static WebDriverWait wait;
 
     @BeforeClass
     public static void setUp() throws Exception {
 
-        File classpathRoot = new File(System.getProperty("user.dir"));
-        File appDir = new File(classpathRoot, "src/main/resources/");
-        File app = new File(appDir, "ApiDemos-debug.apk");
-
         DesiredCapabilities capabilities = DesiredCapabilities.android();
+        capabilities.setCapability("build","Native Android Test Suite");
+
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Samsung Galaxy S4 Emulator");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "4.4");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
-        //capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:ApiDemos-debug.apk");
-        capabilities.setCapability(MobileCapabilityType.APP, app);
+        capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:ApiDemos-debug.apk");
         capabilities.setCapability("browserName", "");
         capabilities.setCapability(MobileCapabilityType.APP_PACKAGE, "io.appium.android.apis");
         capabilities.setCapability(MobileCapabilityType.APP_ACTIVITY, "ApiDemos");
@@ -54,10 +50,8 @@ public class nativeAndroidAppTestSuite {
         capabilities.setCapability("deviceOrientation", "portrait");
         capabilities.setCapability("appiumVersion", "1.4.16");
 
-//        this.driver = new AndroidDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
-//                ,capabilities);
-        driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub")
-                , capabilities);
+        driver = new AndroidDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
+                ,capabilities);
         wait = new WebDriverWait(driver, 10);
     }
 
