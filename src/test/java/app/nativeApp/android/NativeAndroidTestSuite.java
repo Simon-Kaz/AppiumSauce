@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 
 //Test suite for a native Android app
-public class NativeAndroidAppTestSuite {
+public class NativeAndroidTestSuite {
 
     private static String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
     private static String SAUCE_KEY = System.getenv("SAUCE_KEY");
