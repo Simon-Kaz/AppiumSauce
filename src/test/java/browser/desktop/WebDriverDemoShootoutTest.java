@@ -17,9 +17,6 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-/**
- * @author Ross Rowe
- */
 public class WebDriverDemoShootoutTest {
 
     private String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
@@ -36,6 +33,7 @@ public class WebDriverDemoShootoutTest {
         this.driver = new RemoteWebDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
                 ,capabilities);
         driver.get("http://tutorialapp.saucelabs.com");
+        wait = new WebDriverWait(driver, 10);
     }
 
     @After
@@ -43,12 +41,11 @@ public class WebDriverDemoShootoutTest {
         driver.quit();
     }
 
-//    @Test
+    @Test
     public void testLoginFailsWithBadCredentials() throws Exception {
         String userName = getUniqueId();
         String password = getUniqueId();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.name("login")));
-        driver.findElement(By.name("login")).sendKeys(userName);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.name("login"))).sendKeys(userName);;
         driver.findElement(By.name("password")).sendKeys(password);
         driver.findElement(By.cssSelector("input.login")).click();
         assertNotNull("Text not found", driver.findElement(By.id("message")));
@@ -123,7 +120,7 @@ public class WebDriverDemoShootoutTest {
         userDetails.put("confirm_password", userDetails.get("confirm_password") != null ?
                 userDetails.get("confirm_password") : userDetails.get("password"));
         driver.get("http://tutorialapp.saucelabs.com/register");
-        driver.findElement(By.id("username")).sendKeys(userDetails.get("username"));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("username"))).sendKeys(userDetails.get("username"));
         driver.findElement(By.id("password")).sendKeys(userDetails.get("password"));
         driver.findElement(By.id("confirm_password")).sendKeys(userDetails.get("confirm_password"));
         driver.findElement(By.id("name")).sendKeys(userDetails.get("name"));
@@ -137,6 +134,7 @@ public class WebDriverDemoShootoutTest {
 
     private void doLogout() {
         driver.get("http://tutorialapp.saucelabs.com/logout");
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("message")));
         assertEquals("Message not found", "Logged out successfully.", driver.findElement(By.id("message")).getText());
     }
 
@@ -151,7 +149,7 @@ public class WebDriverDemoShootoutTest {
     }
 
     private void doLogin(String username, String password) {
-        driver.findElement(By.name("login")).sendKeys(username);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.name("login"))).sendKeys(username);
         driver.findElement(By.name("password")).sendKeys(password);
         driver.findElement(By.cssSelector("input.login")).click();
         assertEquals("Message not found", "Logged in successfully.", driver.findElement(By.id("message")).getText());
