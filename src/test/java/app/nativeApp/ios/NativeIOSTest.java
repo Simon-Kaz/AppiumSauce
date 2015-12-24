@@ -3,6 +3,7 @@ package app.nativeApp.ios;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.IOSElement;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.junit.*;
 import org.openqa.selenium.Alert;
@@ -10,6 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.ScrollingUtil;
 
 import java.net.URL;
 import java.util.List;
@@ -24,6 +26,7 @@ public class NativeIOSTest {
     private static String SAUCE_KEY = System.getenv("SAUCE_KEY");
     private static AppiumDriver driver;
     private static WebDriverWait wait;
+    private static ScrollingUtil scrollingUtil;
 
     @BeforeClass
     public static void classSetUp() throws Exception {
@@ -34,7 +37,8 @@ public class NativeIOSTest {
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 5s");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.2");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
-        capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:UICatalog.zip");
+//        capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:UICatalog.zip");
+        capabilities.setCapability(MobileCapabilityType.APP, "/Users/szymonk/Desktop/UICatalog.app");
         capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "");
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 180);
         capabilities.setCapability(MobileCapabilityType.DEVICE_READY_TIMEOUT, 60);
@@ -44,9 +48,14 @@ public class NativeIOSTest {
         capabilities.setCapability("autoLaunch", "false");
         capabilities.setCapability("noReset", true); //to reuse the simulator/installed app between tests, rather than restart sim
 
-        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
+//        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
+//                , capabilities);
+        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
                 , capabilities);
+
         wait = new WebDriverWait(driver, 15);
+        scrollingUtil = new ScrollingUtil(driver);
+        System.out.println("Launching sim");
     }
 
     @Before
@@ -163,7 +172,6 @@ public class NativeIOSTest {
         assertThat(alertTextInputField_value, is(stars)); //assert that the message is NOT displayed
     }
 
-
     @Test
     public void defaultProgressBarTest() {
         driver.findElement(MobileBy.AccessibilityId("progress_views_button"))
@@ -171,5 +179,22 @@ public class NativeIOSTest {
         //wait until loading is finished (by waiting for value to be 100%)
         wait.until(ExpectedConditions.textToBePresentInElementValue(driver.findElement(MobileBy.xpath("//UIAProgressIndicator[@name='default_progress_bar']")), "100%"));
         assertThat(driver.findElement(MobileBy.xpath("//UIAProgressIndicator[@name='default_progress_bar']")).getAttribute("value"), is("100%"));
+    }
+
+    @Test
+    public void settingSliderValueTest(){
+        final String expected_value = "75%";
+
+        //sliders button is not in view, scroll to it using native Instruments scrolling method
+        scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'sliders_button'\")")
+        .click();
+
+        //wait for slider to be visible
+        //casting to IOSElement to access the .setValue method
+        IOSElement default_slider = (IOSElement)wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIASlider[@name='default_slider']"))));
+        default_slider.setValue(expected_value);
+
+        String current_value = default_slider.getAttribute("value");
+        assertThat(current_value, is(expected_value));
     }
 }
