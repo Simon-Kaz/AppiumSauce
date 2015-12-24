@@ -182,16 +182,16 @@ public class NativeIOSTest {
     }
 
     @Test
-    public void settingSliderValueTest(){
+    public void settingSliderValueTest() {
         final String expected_value = "75%";
 
         //sliders button is not in view, scroll to it using native Instruments scrolling method
         scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'sliders_button'\")")
-        .click();
+                .click();
 
-        //wait for slider to be visible
+        //wait for slider to become visible
         //casting to IOSElement to access the .setValue method
-        IOSElement default_slider = (IOSElement)wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIASlider[@name='default_slider']"))));
+        IOSElement default_slider = (IOSElement) wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIASlider[@name='default_slider']"))));
         default_slider.setValue(expected_value);
 
         String current_value = default_slider.getAttribute("value");
