@@ -37,8 +37,7 @@ public class NativeIOSTest {
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 5s");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.2");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
-//        capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:UICatalog.zip");
-        capabilities.setCapability(MobileCapabilityType.APP, "/Users/szymonk/Desktop/UICatalog.app");
+        capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:UICatalog.zip");
         capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "");
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 180);
         capabilities.setCapability(MobileCapabilityType.DEVICE_READY_TIMEOUT, 60);
@@ -48,10 +47,10 @@ public class NativeIOSTest {
         capabilities.setCapability("autoLaunch", "false");
         capabilities.setCapability("noReset", true); //to reuse the simulator/installed app between tests, rather than restart sim
 
-//        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
-//                , capabilities);
-        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
                 , capabilities);
+//        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+//                , capabilities);
 
         wait = new WebDriverWait(driver, 15);
         scrollingUtil = new ScrollingUtil(driver);
@@ -196,5 +195,40 @@ public class NativeIOSTest {
 
         String current_value = default_slider.getAttribute("value");
         assertThat(current_value, is(expected_value));
+    }
+
+    @Test
+    public void stepperTest() {
+        //scroll and click the steppers button
+        scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'steppers_button'\")")
+                .click();
+
+        //wait for steppers view to load
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.AccessibilityId("default_stepper_value"))));
+
+        //store some web elements for later use
+        WebElement decrement_button = driver.findElement(MobileBy.xpath("//UIATableCell[@name='default_stepper_value']/UIAButton[1]"));
+        WebElement increment_button = driver.findElement(MobileBy.xpath("//UIATableCell[@name='default_stepper_value']/UIAButton[2]"));
+
+        //store current value and calculate the expected one
+        int original_value = Integer.parseInt(driver.findElement(MobileBy.xpath("//UIAStaticText[@name='default_stepper_value']")).getAttribute("value"));
+        int increment_value = 10;
+        int expected_value = original_value + increment_value;
+
+        for (int i = 0; i < increment_value; i++) {
+            increment_button.click();
+        }
+        int current_value = Integer.parseInt(driver.findElement(MobileBy.xpath("//UIAStaticText[@name='default_stepper_value']")).getAttribute("value"));
+        assertThat(current_value, is(expected_value));
+        //assert that decrement button is disabled
+        assertThat(decrement_button.isEnabled(), is(true));
+
+        for (int i = 0; i < increment_value; i++) {
+            decrement_button.click();
+        }
+        current_value = Integer.parseInt(driver.findElement(MobileBy.xpath("//UIAStaticText[@name='default_stepper_value']")).getAttribute("value"));
+        assertThat(current_value, is(original_value));
+        //assert that decrement button is disabled
+        assertThat(decrement_button.isEnabled(), is(false));
     }
 }
