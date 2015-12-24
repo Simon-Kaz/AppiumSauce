@@ -52,10 +52,10 @@ public class ParallelNativeIOSTest implements SauceOnDemandSessionIdProvider {
     @ConcurrentParameterized.Parameters
     public static LinkedList devicesStrings() {
         LinkedList devices = new LinkedList();
-        devices.add(new String[]{"8.0","iPhone 5s"});
-        devices.add(new String[]{"8.1","iPhone 5s"});
-        devices.add(new String[]{"8.2","iPhone 5s"});
-        devices.add(new String[]{"8.3","iPhone 5s"});
+//        devices.add(new String[]{"8.0","iPhone 5s"});
+//        devices.add(new String[]{"8.1","iPhone 5s"});
+//        devices.add(new String[]{"8.2","iPhone 5s"});
+//        devices.add(new String[]{"8.3","iPhone 5s"});
         devices.add(new String[]{"8.4","iPhone 6"});
         devices.add(new String[]{"9.0","iPhone 5s"});
         devices.add(new String[]{"9.1","iPhone 6"});
