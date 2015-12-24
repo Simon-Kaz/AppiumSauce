@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 
 @RunWith(ConcurrentParameterized.class)
@@ -163,45 +162,5 @@ public class ParallelNativeIOSTest implements SauceOnDemandSessionIdProvider {
         alert.sendKeys(text_alert_message);
         String alertTextInputField_value = driver.findElement(MobileBy.xpath("//UIAAlert//UIATextField")).getText();
         assertThat(alertTextInputField_value, is(text_alert_message));
-    }
-
-
-    @Test
-    public void secureTextAlertTest() {
-        final String secure_text_alert_message = "testing secure alert text input field";
-
-        String stars = "";
-        for (int i = 0; i < secure_text_alert_message.length(); i++) {
-            stars = stars.concat("•");
-        }
-
-        driver.findElement(MobileBy.AccessibilityId("alert_views_button"))
-                .click();
-        driver.findElement(MobileBy.AccessibilityId("secure_text_entry_alert_button"))
-                .click();
-        wait.until(ExpectedConditions.alertIsPresent());
-
-        Alert alert = driver.switchTo().alert();
-        String titleAndMessage = alert.getText();
-        assertThat(titleAndMessage, is("A Short Title Is Best A message should be a short, complete sentence."));
-
-        //TODO: Verify why alert.sendKeys does not work - is it because its a secure text field?
-        //alert.sendKeys(secure_text_alert_message);
-        WebElement alertTextInput_field = driver.findElement(MobileBy.xpath("//UIAAlert//UIASecureTextField"));
-        alertTextInput_field.sendKeys(secure_text_alert_message);
-
-        String alertTextInputField_value = alertTextInput_field.getText();
-        assertThat(alertTextInputField_value, is(not(secure_text_alert_message))); //assert that the message is NOT displayed
-        assertThat(alertTextInputField_value, is(stars)); //assert that the message is NOT displayed
-    }
-
-
-    @Test
-    public void defaultProgressBarTest() {
-        driver.findElement(MobileBy.AccessibilityId("progress_views_button"))
-                .click();
-        //wait until loading is finished (by waiting for value to be 100%)
-        wait.until(ExpectedConditions.textToBePresentInElementValue(driver.findElement(MobileBy.xpath("//UIAProgressIndicator[@name='default_progress_bar']")), "100%"));
-        assertThat(driver.findElement(MobileBy.xpath("//UIAProgressIndicator[@name='default_progress_bar']")).getAttribute("value"), is("100%"));
     }
 }
