@@ -40,8 +40,8 @@ public class NativeIOSTest {
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 5s");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.2");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
-//        capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:UICatalog.zip");
-        capabilities.setCapability(MobileCapabilityType.APP, "/Users/szymonk/Desktop/UICatalog.zip");
+        capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:UICatalog.zip");
+//        capabilities.setCapability(MobileCapabilityType.APP, "/Users/szymonk/Desktop/UICatalog.zip");
         capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "");
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 180);
         capabilities.setCapability(MobileCapabilityType.DEVICE_READY_TIMEOUT, 60);
@@ -51,10 +51,10 @@ public class NativeIOSTest {
         capabilities.setCapability("autoLaunch", "false");
         capabilities.setCapability("noReset", true); //to reuse the simulator/installed app between tests, rather than restart sim
 
-//        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
-//                , capabilities);
-        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
                 , capabilities);
+//        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+//                , capabilities);
 
         wait = new WebDriverWait(driver, 15);
         scrollingUtil = new ScrollingUtil(driver);
