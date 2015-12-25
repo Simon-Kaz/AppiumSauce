@@ -7,11 +7,13 @@ import io.appium.java_client.ios.IOSElement;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.junit.*;
 import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.ScrollingUtil;
+import utils.WebViewUtil;
 
 import java.net.URL;
 import java.util.List;
@@ -27,6 +29,7 @@ public class NativeIOSTest {
     private static AppiumDriver driver;
     private static WebDriverWait wait;
     private static ScrollingUtil scrollingUtil;
+    private static WebViewUtil webViewUtil;
 
     @BeforeClass
     public static void classSetUp() throws Exception {
@@ -37,7 +40,8 @@ public class NativeIOSTest {
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 5s");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.2");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
-        capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:UICatalog.zip");
+//        capabilities.setCapability(MobileCapabilityType.APP, "sauce-storage:UICatalog.zip");
+        capabilities.setCapability(MobileCapabilityType.APP, "/Users/szymonk/Desktop/UICatalog.zip");
         capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "");
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 180);
         capabilities.setCapability(MobileCapabilityType.DEVICE_READY_TIMEOUT, 60);
@@ -47,13 +51,14 @@ public class NativeIOSTest {
         capabilities.setCapability("autoLaunch", "false");
         capabilities.setCapability("noReset", true); //to reuse the simulator/installed app between tests, rather than restart sim
 
-        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
-                , capabilities);
-//        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+//        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
 //                , capabilities);
+        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+                , capabilities);
 
         wait = new WebDriverWait(driver, 15);
         scrollingUtil = new ScrollingUtil(driver);
+        webViewUtil = new WebViewUtil(driver);
         System.out.println("Launching sim");
     }
 
@@ -199,7 +204,7 @@ public class NativeIOSTest {
 
     @Test
     public void stepperTest() {
-        //scroll and click the steppers button
+        //scroll to and click the steppers button
         scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'steppers_button'\")")
                 .click();
 
@@ -230,5 +235,109 @@ public class NativeIOSTest {
         assertThat(current_value, is(original_value));
         //assert that decrement button is disabled
         assertThat(decrement_button.isEnabled(), is(false));
+    }
+
+    @Test
+    public void switchTest(){
+        //scroll to and click the steppers button
+        scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'switches_button'\")")
+                .click();
+
+        //wait for switches view to load
+        WebElement defaultSwitch_element = wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIASwitch[@name='default_switch']"))));
+
+        //switch is ON by default (ON = value set to 1)
+        assertThat(defaultSwitch_element.getAttribute("value"), is("1"));
+
+        defaultSwitch_element.click();
+        //switch should be OFF (OFF = value set to 0)
+        assertThat(defaultSwitch_element.getAttribute("value"), is("0"));
+        //if assertion is intermittent, try adding the wait below
+        //wait.until(ExpectedConditions.textToBePresentInElementValue(default_switch, "0"));
+
+        IOSElement tintedSwitch_element = (IOSElement)driver.findElement(MobileBy.xpath("//UIASwitch[@name='tinted_switch']"));
+
+        //confirm that the switch is on by default
+        assertThat(tintedSwitch_element.getAttribute("value"), is("1"));
+        //set the value to 0 = OFF
+        tintedSwitch_element.setValue("0");
+        //switch should be OFF
+        assertThat(tintedSwitch_element.getAttribute("value"), is("0"));
+    }
+
+    @Test
+    public void textFieldTest(){
+
+        final String sendKeysString = "testing textfield input with send keys";
+        final String setValueString = "testing textfield input with setValue";
+
+        //scroll to and click the text fields button
+        scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'text_fields_button'\")")
+                .click();
+
+        //using sendKeys and asserting via getText
+        WebElement defaultTextField_element = wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIATextField[@name='default_text_field']"))));
+        defaultTextField_element.sendKeys(sendKeysString);
+        assertThat(defaultTextField_element.getText(), is(sendKeysString));
+
+        //using setValue and asserting via attribute "value"
+        IOSElement tintedTextField_element = (IOSElement)driver.findElement(MobileBy.xpath("//UIATextField[@name='default_text_field']"));
+        tintedTextField_element.setValue(setValueString);
+        assertThat(tintedTextField_element.getAttribute("value"), is(setValueString));
+
+        //clear text field using .clear
+        defaultTextField_element.clear();
+        assertThat(defaultTextField_element.getText(), is(""));
+
+        //clear text using setValue
+        tintedTextField_element.setValue("");
+        assertThat(defaultTextField_element.getText(), is(""));
+    }
+
+    @Test
+    public void textViewTest(){
+        final String defaultTextView_value = "This is a UITextView that uses attributed text. You can programmatically modify the display of the text by making it bold, highlighted, underlined, tinted, and more. These attributes are defined in NSAttributedString.h. You can even embed attachments in an NSAttributedString!\u2028￼";
+        final String sendKeysString = "replacing text with sendKeys";
+        final String setValueString = "replacing text with setValue";
+        //scroll to and click the text view button
+        scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'text_view_button'\")")
+                .click();
+        WebElement textView_element = wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIATextView[@name='text_view']"))));
+        assertThat(textView_element.getAttribute("value"), is(defaultTextView_value));
+
+        //replacing text in text view with sendKeys
+        textView_element.sendKeys(sendKeysString);
+        assertThat(textView_element.getAttribute("value"), is(sendKeysString));
+
+        //replacing text in text view with setValue
+        ((IOSElement)textView_element).setValue(setValueString);
+        assertThat(textView_element.getAttribute("value"), is(setValueString));
+    }
+
+    @Test
+    public void webViewAddressBarTest(){
+        //scroll to and click the web view button
+        scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'web_view_button'\")")
+                .click();
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIAElement[@name='web_view']"))));
+        //switch to web view
+        webViewUtil.switchToWebView();
+        String webView_URL = driver.getCurrentUrl();
+        assertThat(webView_URL, is("http://www.apple.com/"));
+    }
+
+    @Test
+    public void webViewManipulationTest(){
+        //scroll to and click the web view button
+        scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'web_view_button'\")")
+                .click();
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIAElement[@name='web_view']"))));
+        //switch to web view
+        webViewUtil.switchToWebView();
+        //switch to a different page
+        driver.get("https://www.imgur.com");
+        //wait for element to load
+        WebElement header_element = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#header")));
+        assertThat(header_element.isDisplayed(), is(true));
     }
 }
