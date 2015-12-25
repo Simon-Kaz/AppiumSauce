@@ -280,18 +280,21 @@ public class NativeIOSTest {
         defaultTextField_element.sendKeys(sendKeysString);
         assertThat(defaultTextField_element.getText(), is(sendKeysString));
 
+        //clear text field using .clear
+        defaultTextField_element.clear();
+        assertThat(defaultTextField_element.getText(), is("Placeholder text"));
+
+        //scrolling to element first
+        scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'tinted_text_field'\")");
+
         //using setValue and asserting via attribute "value"
-        IOSElement tintedTextField_element = (IOSElement)driver.findElement(MobileBy.xpath("//UIATextField[@name='default_text_field']"));
+        IOSElement tintedTextField_element = (IOSElement)driver.findElement(MobileBy.xpath("//UIATextField[@name='tinted_text_field']"));
         tintedTextField_element.setValue(setValueString);
         assertThat(tintedTextField_element.getAttribute("value"), is(setValueString));
 
-        //clear text field using .clear
-        defaultTextField_element.clear();
-        assertThat(defaultTextField_element.getText(), is(""));
-
         //clear text using setValue
         tintedTextField_element.setValue("");
-        assertThat(defaultTextField_element.getText(), is(""));
+        assertThat(defaultTextField_element.getText(), is("Placeholder text"));
     }
 
     @Test
