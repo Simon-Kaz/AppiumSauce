@@ -67,6 +67,7 @@ public class NativeIOSTest {
         System.out.println("launching app");
         driver.launchApp();
         //wait until main view loads
+        webViewUtil.switchToNativeView();
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.AccessibilityId("date_picker_button"))));
     }
 
@@ -322,7 +323,7 @@ public class NativeIOSTest {
         //scroll to and click the web view button
         scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'web_view_button'\")")
                 .click();
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIAElement[@name='web_view']"))));
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.className("UIAWebView"))));
         //switch to web view
         webViewUtil.switchToWebView();
         String webView_URL = driver.getCurrentUrl();
@@ -334,7 +335,7 @@ public class NativeIOSTest {
         //scroll to and click the web view button
         scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'web_view_button'\")")
                 .click();
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.xpath("//UIAElement[@name='web_view']"))));
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.className("UIAWebView"))));
         //switch to web view
         webViewUtil.switchToWebView();
         //switch to a different page

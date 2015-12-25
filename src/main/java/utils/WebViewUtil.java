@@ -15,4 +15,8 @@ public class WebViewUtil {
         Set<String> listOfViews = driver.getContextHandles();
         listOfViews.stream().filter(view -> view.contains("WEBVIEW")).forEach(driver::context);
     }
+    public void switchToNativeView() {
+        Set<String> listOfViews = driver.getContextHandles();
+        listOfViews.stream().filter(view -> view.contains("NATIVE")).forEach(driver::context);
+    }
 }
