@@ -30,8 +30,8 @@ public class WebViewIssueIOSTest {
     @BeforeClass
     public static void classSetUp() throws Exception {
         DesiredCapabilities capabilities = DesiredCapabilities.iphone();
-        capabilities.setCapability("build", "Native iOS Test Suite");
-        capabilities.setCapability("name", "iPhone 5s 9.2");
+        capabilities.setCapability("build", "Native WebView Support iOS Test Suite");
+        capabilities.setCapability("name", "iPhone WebView Support 5s 9.2");
 
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 5s");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.2");
