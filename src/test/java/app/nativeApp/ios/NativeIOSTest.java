@@ -319,18 +319,6 @@ public class NativeIOSTest {
     }
 
     @Test
-    public void webViewAddressBarTest(){
-        //scroll to and click the web view button
-        scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'web_view_button'\")")
-                .click();
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.className("UIAWebView"))));
-        //switch to web view
-        webViewUtil.switchToWebView();
-        String webView_URL = driver.getCurrentUrl();
-        assertThat(webView_URL, is("http://www.apple.com/"));
-    }
-
-    @Test
     public void webViewManipulationTest(){
         //scroll to and click the web view button
         scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'web_view_button'\")")
@@ -343,5 +331,7 @@ public class NativeIOSTest {
         //wait for element to load
         WebElement header_element = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#header")));
         assertThat(header_element.isDisplayed(), is(true));
+        String webView_URL = driver.getCurrentUrl();
+        assertThat(webView_URL, is("https://m.imgur.com/"));
     }
 }
