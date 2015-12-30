@@ -5,6 +5,9 @@ import io.appium.java_client.MobileBy;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.IOSElement;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.*;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -51,10 +54,10 @@ public class NativeIOSTest {
         capabilities.setCapability("autoLaunch", "false");
         capabilities.setCapability("noReset", true); //to reuse the simulator/installed app between tests, rather than restart sim
 
-        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
-                , capabilities);
-//        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+//        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
 //                , capabilities);
+        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+                , capabilities);
 
         wait = new WebDriverWait(driver, 15);
         scrollingUtil = new ScrollingUtil(driver);
@@ -85,11 +88,34 @@ public class NativeIOSTest {
 
     @Test
     public void datePickerTest() throws Exception {
-        final String date = "Sun Dec 27";
-        final String hour = "5";
-        final String minute = "55";
-        final String timePeriod = "PM";
-        final String fullDate = "Dec 27, 2015, 5:55 PM";
+
+        // Using Joda Time DateTime and DateTimeFormatter for this test!
+        // Creating test data - using +3 days, hours and minutes
+        // to make sure that all wheels are used
+        DateTime testDate = new DateTime().plusDays(3).plusHours(3).plusMinutes(3);
+
+        // hour of the day - short format
+        // i tried to get it using .hourOfDay().getAsShortText() but it would only return 24hr format...
+        DateTimeFormatter hourOfDayFormat = DateTimeFormat.forPattern("K");
+
+        // half day of day - AM or PM
+        // have to use a new formatter for this as there is no getter - let me know if I'm wrong!
+        DateTimeFormatter halfDayFormat = DateTimeFormat.forPattern("aa");
+
+        // short date - example "Sun Dec 27"
+        // to be used with the date picker in gregorian calendar
+        DateTimeFormatter shortDateFormat = DateTimeFormat.forPattern("E MMM d");
+
+        // longDate - example pattern "Dec 27, 2015, 5:55 PM"
+        // to be used for assertion at the end of the test
+        DateTimeFormatter longDateFormat = DateTimeFormat.forPattern("MMM d, yyyy, K:mm aa");
+
+        final String hour = testDate.toString(hourOfDayFormat);
+        final String minute = testDate.minuteOfHour().getAsString();
+        final String shortDate = testDate.toString(shortDateFormat);
+        final String longDate = testDate.toString(longDateFormat);
+        final String halfDay = testDate.toString(halfDayFormat);
+
 
         driver.findElement(MobileBy.AccessibilityId("date_picker_button"))
                 .click();
@@ -97,13 +123,13 @@ public class NativeIOSTest {
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.className("UIAPickerWheel"))));
 
         List<WebElement> pickerWheel_elements = driver.findElements(MobileBy.className("UIAPickerWheel"));
-        pickerWheel_elements.get(0).sendKeys(date);
+        pickerWheel_elements.get(0).sendKeys(shortDate);
         pickerWheel_elements.get(1).sendKeys(hour);
         pickerWheel_elements.get(2).sendKeys(minute);
-        pickerWheel_elements.get(3).sendKeys(timePeriod);
+        pickerWheel_elements.get(3).sendKeys(halfDay);
 
         String dateValidation_element = driver.findElement(MobileBy.AccessibilityId("current_date")).getText();
-        assertThat(dateValidation_element, is(fullDate));
+        assertThat(dateValidation_element, is(longDate));
     }
 
 
@@ -239,7 +265,7 @@ public class NativeIOSTest {
     }
 
     @Test
-    public void switchTest(){
+    public void switchTest() {
         //scroll to and click the steppers button
         scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'switches_button'\")")
                 .click();
@@ -256,7 +282,7 @@ public class NativeIOSTest {
         //if assertion is intermittent, try adding the wait below
         //wait.until(ExpectedConditions.textToBePresentInElementValue(default_switch, "0"));
 
-        IOSElement tintedSwitch_element = (IOSElement)driver.findElement(MobileBy.xpath("//UIASwitch[@name='tinted_switch']"));
+        IOSElement tintedSwitch_element = (IOSElement) driver.findElement(MobileBy.xpath("//UIASwitch[@name='tinted_switch']"));
 
         //confirm that the switch is on by default
         assertThat(tintedSwitch_element.getAttribute("value"), is("1"));
@@ -267,7 +293,7 @@ public class NativeIOSTest {
     }
 
     @Test
-    public void textFieldTest(){
+    public void textFieldTest() {
 
         final String sendKeysString = "testing textfield input with send keys";
         final String setValueString = "testing textfield input with setValue";
@@ -289,7 +315,7 @@ public class NativeIOSTest {
         scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'tinted_text_field'\")");
 
         //using setValue and asserting via attribute "value"
-        IOSElement tintedTextField_element = (IOSElement)driver.findElement(MobileBy.xpath("//UIATextField[@name='tinted_text_field']"));
+        IOSElement tintedTextField_element = (IOSElement) driver.findElement(MobileBy.xpath("//UIATextField[@name='tinted_text_field']"));
         tintedTextField_element.setValue(setValueString);
         assertThat(tintedTextField_element.getAttribute("value"), is(setValueString));
 
@@ -299,7 +325,7 @@ public class NativeIOSTest {
     }
 
     @Test
-    public void textViewTest(){
+    public void textViewTest() {
         final String defaultTextView_value = "This is a UITextView that uses attributed text. You can programmatically modify the display of the text by making it bold, highlighted, underlined, tinted, and more. These attributes are defined in NSAttributedString.h. You can even embed attachments in an NSAttributedString!\u2028￼";
         final String sendKeysString = "replacing text with sendKeys";
         final String setValueString = "replacing text with setValue";
@@ -314,12 +340,12 @@ public class NativeIOSTest {
         assertThat(textView_element.getAttribute("value"), is(sendKeysString));
 
         //replacing text in text view with setValue
-        ((IOSElement)textView_element).setValue(setValueString);
+        ((IOSElement) textView_element).setValue(setValueString);
         assertThat(textView_element.getAttribute("value"), is(setValueString));
     }
 
     @Test
-    public void webViewManipulationTest(){
+    public void webViewManipulationTest() {
         //scroll to and click the web view button
         scrollingUtil.scrollToiOSUIAutomation("target.frontMostApp().mainWindow().tableViews()[0].cells().firstWithPredicate(\"name = 'web_view_button'\")")
                 .click();
