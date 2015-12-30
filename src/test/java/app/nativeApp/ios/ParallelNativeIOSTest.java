@@ -8,6 +8,9 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -55,10 +58,10 @@ public class ParallelNativeIOSTest implements SauceOnDemandSessionIdProvider {
 //        devices.add(new String[]{"8.1","iPhone 5s"});
 //        devices.add(new String[]{"8.2","iPhone 5s"});
 //        devices.add(new String[]{"8.3","iPhone 5s"});
-        devices.add(new String[]{"8.4","iPhone 6"});
-        devices.add(new String[]{"9.0","iPhone 5s"});
-        devices.add(new String[]{"9.1","iPhone 6"});
-        devices.add(new String[]{"9.2","iPhone 6 Plus"});
+        devices.add(new String[]{"8.4", "iPhone 6"});
+        devices.add(new String[]{"9.0", "iPhone 5s"});
+        devices.add(new String[]{"9.1", "iPhone 6"});
+        devices.add(new String[]{"9.2", "iPhone 6 Plus"});
         return devices;
     }
 
@@ -99,14 +102,35 @@ public class ParallelNativeIOSTest implements SauceOnDemandSessionIdProvider {
         return sessionId;
     }
 
-
     @Test
     public void datePickerTest() throws Exception {
-        final String date = "Sun Dec 27";
-        final String hour = "5";
-        final String minute = "55";
-        final String timePeriod = "PM";
-        final String fullDate = "Dec 27, 2015, 5:55 PM";
+        // Using Joda Time DateTime and DateTimeFormatter for this test!
+        // Creating test data - using +3 days, hours and minutes
+        // to make sure that all wheels are used
+        DateTime testDate = new DateTime().plusDays(3).plusHours(3).plusMinutes(3);
+
+        // hour of the day - short format
+        // i tried to get it using .hourOfDay().getAsShortText() but it would only return 24hr format...
+        DateTimeFormatter hourOfDayFormat = DateTimeFormat.forPattern("K");
+
+        // half day of day - AM or PM
+        // have to use a new formatter for this as there is no getter - let me know if I'm wrong!
+        DateTimeFormatter halfDayFormat = DateTimeFormat.forPattern("aa");
+
+        // short date - example "Sun Dec 27"
+        // to be used with the date picker in gregorian calendar
+        DateTimeFormatter shortDateFormat = DateTimeFormat.forPattern("E MMM d");
+
+        // longDate - example pattern "Dec 27, 2015, 5:55 PM"
+        // to be used for assertion at the end of the test
+        DateTimeFormatter longDateFormat = DateTimeFormat.forPattern("MMM d, yyyy, K:mm aa");
+
+        final String hour = testDate.toString(hourOfDayFormat);
+        final String minute = testDate.minuteOfHour().getAsString();
+        final String shortDate = testDate.toString(shortDateFormat);
+        final String longDate = testDate.toString(longDateFormat);
+        final String halfDay = testDate.toString(halfDayFormat);
+
 
         driver.findElement(MobileBy.AccessibilityId("date_picker_button"))
                 .click();
@@ -114,15 +138,14 @@ public class ParallelNativeIOSTest implements SauceOnDemandSessionIdProvider {
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(MobileBy.className("UIAPickerWheel"))));
 
         List<WebElement> pickerWheel_elements = driver.findElements(MobileBy.className("UIAPickerWheel"));
-        pickerWheel_elements.get(0).sendKeys(date);
+        pickerWheel_elements.get(0).sendKeys(shortDate);
         pickerWheel_elements.get(1).sendKeys(hour);
         pickerWheel_elements.get(2).sendKeys(minute);
-        pickerWheel_elements.get(3).sendKeys(timePeriod);
+        pickerWheel_elements.get(3).sendKeys(halfDay);
 
         String dateValidation_element = driver.findElement(MobileBy.AccessibilityId("current_date")).getText();
-        assertThat(dateValidation_element, is(fullDate));
+        assertThat(dateValidation_element, is(longDate));
     }
-
 
     @Test
     public void handlingSimpleAlertTest() {
@@ -142,7 +165,6 @@ public class ParallelNativeIOSTest implements SauceOnDemandSessionIdProvider {
         assertThat(titleAndMessage, is(expected_alert_text));
         alert.accept();
     }
-
 
     @Test
     public void textInputAlertTest() {
