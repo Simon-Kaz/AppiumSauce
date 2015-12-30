@@ -54,10 +54,10 @@ public class NativeIOSTest {
         capabilities.setCapability("autoLaunch", "false");
         capabilities.setCapability("noReset", true); //to reuse the simulator/installed app between tests, rather than restart sim
 
-//        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
-//                , capabilities);
-        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+        driver = new IOSDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
                 , capabilities);
+//        driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub")
+//                , capabilities);
 
         wait = new WebDriverWait(driver, 15);
         scrollingUtil = new ScrollingUtil(driver);
