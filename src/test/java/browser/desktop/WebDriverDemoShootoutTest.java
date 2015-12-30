@@ -28,6 +28,7 @@ public class WebDriverDemoShootoutTest {
     public void setUp() throws Exception {
 
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+        capabilities.setCapability("build", "WebDriver Demo Shootout Test Suite");
         capabilities.setCapability("version", "17");
         capabilities.setCapability("platform", Platform.XP);
         this.driver = new RemoteWebDriver(new URL("http://" + SAUCE_USERNAME + ":" + SAUCE_KEY + "@ondemand.saucelabs.com:80/wd/hub")
